@@ -8,7 +8,7 @@ Language-agnostic (Rust / Go / Node / Python / C / C++ / Tauri ...) — as long 
 
 ## What it does
 
-Given a request like *"nix打包"*, *"write a default.nix"*, *"pack this binary into my system"*, the agent generates a **binary-base** `default.nix` — a `stdenv.mkDerivation` that skips every build phase and copies your locally built artifact into `$out` via a path literal:
+Given a packaging request — *"package this binary into my system"*, *"write a default.nix"*, *"nix 打包"* (the skill responds in both Chinese and English; see [`SKILL.md`](SKILL.md) for the full trigger list) — the agent generates a **binary-base** `default.nix` — a `stdenv.mkDerivation` that skips every build phase and copies your locally built artifact into `$out` via a path literal:
 
 ```nix
 { pkgs ? import <nixpkgs> {} }:
