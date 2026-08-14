@@ -1,12 +1,12 @@
 # skill-nix-binary-base-packing-creator
 
-一个 Claude/Agent **Skill**：把"本机构建产物 → Nix 纯打包 → 秒级进系统"固化成一个可复现的工作流。核心原则：**Nix 不编译，只打包**。
+一个通用 Agent **Skill**：把"本机构建产物 → Nix 纯打包 → 秒级进系统"固化成一个可复现的工作流。核心原则：**Nix 不编译，只打包**。
 
 适用于任何语言（Rust / Go / Node / Python / C/C++ / Tauri ...），前提是本机能产出**可执行产物**——包括单文件二进制，也包括先在本机"单文件化"过的解释型应用（`bun compile` / Node SEA / PyInstaller onedir 等）。
 
 ## 这是什么
 
-这是给 Claude Code / Claude Desktop 等 Agent 用的 **skill 包**，不是 Nix 库。把它装进你的 skill 目录后，Agent 在收到"nix打包"、"写个default.nix"、"打包进系统"、"二进制打包"这类请求时，会自动按这套流程帮你生成二进制 base 风格的 `default.nix`。
+这是**通用 Agent Skill**（遵循业界通用的 `SKILL.md` + `references/` 目录规范，由 Anthropic 提出、被 Claude Code / Cline / Roo Code / OpenCode / Zed / Cursor / Codex / Windsurf 等众多 Agent 工具采用），不是 Nix 库。把它装进任意支持 skill 的 Agent 的 skills 目录后，Agent 在收到"nix打包"、"写个default.nix"、"打包进系统"、"二进制打包"这类请求时，会自动按这套流程帮你生成二进制 base 风格的 `default.nix`。格式本身与具体厂商无关，只依赖 Agent 是否支持 `SKILL.md` 约定。
 
 ## 核心思想
 
@@ -42,15 +42,16 @@ pkgs.stdenv.mkDerivation {
 
 ## 安装
 
-把本仓库克隆（或复制）到你的 skill 目录：
+把本仓库克隆（或复制）到你的 Agent 的 **skills 目录**即可。各工具目录不同，最通用的方式：
 
 ```bash
-# Claude Code
-mkdir -p ~/.claude/skills
-git clone https://github.com/PAKIKNOWLEDGE/skill-nix-binary-base-packing-creator \
-  ~/.claude/skills/skill-nix-binary-base-packing-creator
-
-# Claude Desktop / 其他 Agent：按各自 skill 目录约定放置
+git clone https://github.com/PAKIKNOWLEDGE/skill-nix-binary-base-packing-creator
+# 然后把整个目录放进你的 Agent 的 skills 目录，例如：
+#   Claude Code：  ~/.claude/skills/skill-nix-binary-base-packing-creator
+#   Cline：        ~/.cline/skills/...   或项目内 .cline/skills/
+#   Roo Code：     ~/.roo/skills/...
+#   OpenCode/Zed/Cursor/Codex 等：按各自工具的 skill 目录约定放置
+# 具体路径以所用工具的官方文档为准；也可以直接用工具自带的 skill 管理命令安装
 ```
 
 要求目录里包含 `SKILL.md`（Agent 读取的指令）与 `references/`（模板与排障资料）。目录结构见下文。
@@ -61,14 +62,12 @@ git clone https://github.com/PAKIKNOWLEDGE/skill-nix-binary-base-packing-creator
 .
 ├── SKILL.md                    # Skill 主指令：Agent 读取的完整工作流
 ├── README.md                   # 本文件
-├── references/
-│   ├── template-basic.nix      # 模板 A：静态 / store 内动态二进制（CLI/TUI）
-│   ├── template-gui.nix        # 模板 B：GUI 应用（GTK/Qt/Tauri/webview）
-│   ├── template-patchelf.nix   # 模板 C：外来动态二进制 / 预编译 / 闭源
-│   ├── template-interpreter.nix# 模板 D：解释型脚本 / 多文件产物
-│   └── troubleshooting.md      # 按症状排障（全部来自真实踩坑）
-└── .claude/
-    └── settings.local.json     # 本机权限配置
+└── references/
+    ├── template-basic.nix      # 模板 A：静态 / store 内动态二进制（CLI/TUI）
+    ├── template-gui.nix        # 模板 B：GUI 应用（GTK/Qt/Tauri/webview）
+    ├── template-patchelf.nix   # 模板 C：外来动态二进制 / 预编译 / 闭源
+    ├── template-interpreter.nix# 模板 D：解释型脚本 / 多文件产物
+    └── troubleshooting.md      # 按症状排障（全部来自真实踩坑）
 ```
 
 ## 工作流速览
